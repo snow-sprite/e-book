@@ -8,7 +8,6 @@ module.exports = {
   runtimeCompiler: false,
   transpileDependencies: [],
   productionSourceMap: false,
-  crossorigin: undefined,
   integrity: false,
   configureWebpack: {
     // plugin: [
@@ -37,7 +36,7 @@ module.exports = {
     //     pathRewrite: {
     //       "^/api": ""
     //     },
-    //     secure: false // 可在htps上且使用了无效证书的后端服务器上运行
+    //     secure: false // 可在https上且使用了无效证书的后端服务器上运行
     //   }
     // }
   },
