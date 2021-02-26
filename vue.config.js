@@ -1,5 +1,5 @@
 module.exports = {
-  publicPath: process.env.NODE_ENV == "production" ? "/" : "/dev",
+  publicPath: process.env.NODE_ENV === "production" ? "/" : "/dev",
   outputDir: "dist",
   assetsDir: "static",
   indexPath: "index.html",
@@ -18,7 +18,7 @@ module.exports = {
   chainWebpack: config => {},
   css: {
     requireModuleExtension: true,
-    extract: process.env.NODE_ENV == "production" ? true : false,
+    extract: process.env.NODE_ENV === "production" ? true : false,
     sourceMap: false,
     loaderOptions: {
       scss: {
