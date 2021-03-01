@@ -20,6 +20,8 @@ module.exports = {
   },
   //当使用第三方的SDK时，eslint会报找不到，可以加入到globals，取消对这个的检查
   globals: {
-    fengmap: true
+    '$': true,
+    'yepnope': true,
+    'Modernizr': true
   }
 };

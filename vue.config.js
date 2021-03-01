@@ -1,5 +1,6 @@
+const webpack = require("webpack")
 module.exports = {
-  publicPath: process.env.NODE_ENV === "production" ? "/" : "/dev",
+  publicPath: "/",
   outputDir: "dist",
   assetsDir: "static",
   indexPath: "index.html",
@@ -10,9 +11,13 @@ module.exports = {
   productionSourceMap: false,
   integrity: false,
   configureWebpack: {
-    // plugin: [
-    //   new MyAwesomeWebpackPlugin()
-    // ]
+    plugins: [
+      // new webpack.ProvidePlugin({
+      //   $: "jquery",
+      //   jQuery: "jquery",
+      //   "window.jQuery": 'jquery'
+      //  })
+    ]
   },
   chainWebpack: config => {},
   css: {

@@ -48,7 +48,7 @@ export default class List extends Vue {
   jumpDetail(id) {
     this.$router.push({
       name: 'detail',
-      params: { id }
+      query: { id }
     });
   }
 }

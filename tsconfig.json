@@ -18,6 +18,9 @@
     "paths": {
       "@/*": [
         "src/*"
+      ],
+      "@assets/*": [
+        "src/assets/*"
       ]
     },
     "lib": [
