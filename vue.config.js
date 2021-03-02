@@ -1,4 +1,5 @@
 const webpack = require("webpack")
+const path = require("path")
 module.exports = {
   publicPath: "/",
   outputDir: "dist",
@@ -6,7 +7,6 @@ module.exports = {
   indexPath: "index.html",
   filenameHashing: true,
   lintOnSave: process.env.NODE_ENV !== "production",
-  runtimeCompiler: false,
   transpileDependencies: [],
   productionSourceMap: false,
   integrity: false,
@@ -17,7 +17,13 @@ module.exports = {
       //   jQuery: "jquery",
       //   "window.jQuery": 'jquery'
       //  })
-    ]
+    ],
+    resolve: {
+      alias: {
+        "@assets": path.resolve(__dirname, "src/assets/"),
+        "@libs": path.resolve(__dirname, "src/libs/")
+      }
+    }
   },
   chainWebpack: config => {},
   css: {

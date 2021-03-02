@@ -1,5 +1,11 @@
 <!DOCTYPE html>
+<!--[if lt IE 7 ]> <html lang="en" class="ie6"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="ie7"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="ie8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!-->
 <html lang="en">
+<!--<![endif]-->
 
 <head>
   <meta charset="utf-8">
@@ -20,6 +26,26 @@
   <script src="./js/jquery.min.1.7.js"></script>
   <script src="./js/modernizr.min.js"></script>
   <script src="./js/turn.min.js"></script>
+  <script>
+    (function (doc, win) {
+      var docEl = doc.documentElement,
+        resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
+        recalc = function () {
+          var clientWidth = docEl.clientWidth;
+          if (!clientWidth) return;
+          if (clientWidth >= 750) {
+            docEl.style.fontSize = '100px';
+          } else {
+            docEl.style.fontSize = 100 * (clientWidth / 500) + 'px';
+          }
+        };
+
+      if (!doc.addEventListener) return;
+      win.addEventListener(resizeEvt, recalc, false);
+      doc.addEventListener('DOMContentLoaded', recalc, false);
+    })(document, window);
+
+  </script>
 </body>
 
 </html>

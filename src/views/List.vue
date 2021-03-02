@@ -83,7 +83,7 @@ export default class List extends Vue {
       width: 100%;
       height: auto;
       background: rgba(0, 0, 0, 0.5);
-      font-size: 18px;
+      font-size: 0.18rem;
       color: #fff;
       text-align: center;
     }
