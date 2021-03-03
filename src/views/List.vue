@@ -57,13 +57,13 @@ export default class List extends Vue {
 <style lang="scss" scoped>
 .wraper {
   width: 90%;
-  max-width: 1800px;
+  max-width: 18rem;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
   // 必要时折行
   flex-wrap: wrap;
-  margin-top: 20px;
+  margin-top: 0.2rem;
   li {
     list-style: none;
   }
@@ -73,8 +73,8 @@ export default class List extends Vue {
     cursor: pointer;
     transition: transform 0.3s;
     &:hover {
-      transform: translate(0, -10px);
-      box-shadow: 4px 4px 5px 4px #ccc;
+      transform: translate(0, -0.1rem);
+      box-shadow: 0 0.04rem 0.05rem 0.04rem #ccc;
     }
     .name {
       position: absolute;
@@ -101,9 +101,9 @@ export default class List extends Vue {
   .wraper {
     .card {
       width: calc(80%);
-      margin: 0 auto 10px;
+      margin: 0 auto 0.1rem;
       .thumb {
-        height: 160px;
+        height: 3rem;
       }
     }
   }
@@ -112,9 +112,9 @@ export default class List extends Vue {
   .wraper {
     .card {
       width: calc(50% - 3%);
-      margin-bottom: 10px;
+      margin-bottom: 0.1rem;
       .thumb {
-        height: 350px;
+        height: 3.5rem;
       }
     }
   }
@@ -123,9 +123,9 @@ export default class List extends Vue {
   .wraper {
     .card {
       width: calc(33% - 3%);
-      margin-bottom: 10px;
+      margin-bottom: 0.1rem;
       .thumb {
-        height: 400px;
+        height: 4rem;
       }
     }
   }
@@ -136,7 +136,7 @@ export default class List extends Vue {
     .card {
       width: calc(25% - 3%);
       .thumb {
-        height: 450px;
+        height: 4.5rem;
       }
     }
   }
@@ -147,7 +147,7 @@ export default class List extends Vue {
     .card {
       width: calc(25% - 3%);
       .thumb {
-        height: 500px;
+        height: 5rem;
       }
     }
   }

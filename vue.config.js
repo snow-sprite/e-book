@@ -21,7 +21,9 @@ module.exports = {
     resolve: {
       alias: {
         "@assets": path.resolve(__dirname, "src/assets/"),
-        "@libs": path.resolve(__dirname, "src/libs/")
+        "@libs": path.resolve(__dirname, "src/libs/"),
+        "@cmp": path.resolve(__dirname, "src/components/"),
+        "@store": path.resolve(__dirname, "src/store/"),
       }
     }
   },
