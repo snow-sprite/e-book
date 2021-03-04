@@ -29,6 +29,9 @@
     </header>
     <div class="page-left" v-show="!isMobile"></div>
     <div class="page-right" v-show="!isMobile"></div>
+    <div class="ebook-box">
+      <EBook />
+    </div>
   </div>
 </template>
 
@@ -36,6 +39,9 @@
 import { Vue, Component } from 'vue-property-decorator';
 import { simple } from '@libs/simple';
 import device from '@libs/device';
+
+import EBook from '@cmp/EBook';
+
 // images
 import zoomIn from '@assets/images/zoom-in.png';
 import nav from '@assets/images/nav.png';
@@ -51,7 +57,13 @@ import share from '@assets/images/share.png';
 import down from '@assets/images/down.png';
 import full from '@assets/images/full.png';
 import more from '@assets/images/more.png';
-@Component
+
+// Vue's options here..
+@Component({
+  components: {
+    EBook
+  }
+})
 export default class Detail extends Vue {
   leftNavs = [
     { id: 1, title: '放大', pic: zoomIn, isShow: true },
@@ -99,11 +111,13 @@ export default class Detail extends Vue {
   width: 100%;
   height: 100vh;
   background: #fff;
+  position: relative;
   .header {
     margin: 0 auto;
     box-sizing: border-box;
     padding-top: 0.09rem;
     position: relative;
+    z-index: 99;
     width: 80%;
     height: 0.46rem;
     font-size: 0.18rem;
@@ -186,6 +200,7 @@ export default class Detail extends Vue {
     width: 0.48rem;
     height: 0.96rem;
     position: absolute;
+    z-index: 9;
     top: calc(50% - 0.48rem);
     cursor: pointer;
     &:active {
@@ -206,6 +221,15 @@ export default class Detail extends Vue {
     &:hover {
       background: url('../assets/images/next_normal_down.png') no-repeat center;
     }
+  }
+  .ebook-box {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
   }
 }
 </style>
