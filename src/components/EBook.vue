@@ -2,18 +2,32 @@
   <div id="canvas">
     <div id="book-zoom">
       <div class="my-book">
-        <div depth="5" class="hard">
+        <!-- <pdf :src="pdfUrl" :page="1"></pdf> -->
+        <div depth="1" class="">
           <div class="side"></div>
         </div>
-        <div depth="5" class="hard front-side">
+        <!-- <div depth="5" class="hard front-side">
           <div class="depth"></div>
+        </div> -->
+        <div class="own-size">
+          <!-- :page="currentPage" -->
+          <!-- <pdf
+            :src="pdfUrl"
+            :page="currentPage * 2"
+            @num-pages="pages = $event"
+          ></pdf> -->
         </div>
-        <div class="own-size"></div>
-        <div class="own-size even"></div>
-        <div class="hard fixed back-side p111">
+        <div class="own-size even">
+          <!-- <pdf
+            :src="pdfUrl"
+            :page="currentPage * 2 + 1"
+            @num-pages="pages = $event"
+          ></pdf> -->
+        </div>
+        <!-- <div class=" fixed back-side p111">
           <div class="depth"></div>
-        </div>
-        <div class="hard p112"></div>
+        </div> -->
+        <!-- <div class=" p112"></div> -->
       </div>
     </div>
     <div id="slider-bar" class="turnjs-slider">
@@ -21,9 +35,10 @@
     </div>
   </div>
 </template>
-<script>
+<script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 import '@assets/js/turn.min';
+import store from '@/store/index';
 import {
   zoomHandle,
   updateDepth,
@@ -38,14 +53,27 @@ import {
   name: 'EBook'
 })
 export default class EBook extends Vue {
-  loadApp() {
+  // pdf link
+  private pdfUrl = 'http://image.cache.timepack.cn/nodejs.pdf';
+  // total pages
+  private pages = 0;
+  private currentPage = 1;
+  private async getPdfPages() {
+    const loadingTask = Vue.prototype.$pdf.createLoadingTask(this.pdfUrl);
+    const data = await loadingTask.promise;
+    // 设置总页数
+    this.pages = data.numPages;
+
+    this.init(this.pdfUrl); // 初始化容器
+  }
+
+  private loadApp(url: string) {
     const flipbook = $('.my-book');
     // Check if the CSS was already loaded
     if (flipbook.width() == 0 || flipbook.height() == 0) {
       setTimeout(this.loadApp, 3000);
       return;
     }
-    console.log(1, flipbook.width(), flipbook.height());
     // Slider
     // $('#slider').slider({
     //   min: 1,
@@ -79,11 +107,11 @@ export default class EBook extends Vue {
 
     // Arrows
 
-    $(document).keydown(function(e) {
+    $(document).keydown(function(e: Event) {
       const previous = 37,
         next = 39;
 
-      switch (e.keyCode) {
+      switch (e['keyCode']) {
         case previous:
           $('.my-book').turn('previous');
 
@@ -106,9 +134,9 @@ export default class EBook extends Vue {
       gradients: true,
       display: 'double',
       duration: 1000,
-      pages: 112,
+      pages: this.pages,
       when: {
-        turning: function(e, page) {
+        turning: function(e: Event, page: number) {
           const book = $(this),
             currentPage = book.turn('page'),
             pages = book.turn('pages');
@@ -152,7 +180,7 @@ export default class EBook extends Vue {
           if (page < book.turn('pages')) $('.my-book .p111').addClass('fixed');
           else $('.my-book .p111').removeClass('fixed');
         },
-        turned: function(e, page) {
+        turned: function(e: Event, page: number) {
           const book = $(this);
           if (page == 2 || page == 3) {
             book.turn('peel', 'br');
@@ -172,9 +200,9 @@ export default class EBook extends Vue {
           }, 1);
           moveBar(false);
         },
-        missing: function(e, pages) {
+        missing: function(e: Event, pages: number) {
           for (let i = 0; i < pages.length; i++) {
-            addPage(pages[i], $(this));
+            addPage(pages[i], $(this), pages, url);
           }
         }
       }
@@ -189,17 +217,20 @@ export default class EBook extends Vue {
     $('#canvas').css({
       visibility: ''
     });
+
+    store.commit('book/setPage', this.currentPage);
+    store.commit('book/setPages', this.pages);
   }
-  init() {
+  init(url: string) {
     // Hide canvas
     $('#canvas').css({
       visibility: 'hidden'
     });
-    this.loadApp();
+    this.loadApp(url);
   }
 
   mounted() {
-    this.init();
+    this.getPdfPages(); // 初始化pdf
   }
 }
 </script>

@@ -17,12 +17,19 @@
   </ul>
 </template>
 
-<script>
+<script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 
-@Component
+interface List {
+  name?: string;
+  thumb?: string;
+}
+
+@Component({
+  name: 'List'
+})
 export default class List extends Vue {
-  list = [
+  private list: Array<List> = [
     {
       name: '山',
       thumb:
@@ -45,7 +52,7 @@ export default class List extends Vue {
     }
   ];
 
-  jumpDetail(id) {
+  private jumpDetail(id: string) {
     this.$router.push({
       name: 'detail',
       query: { id }

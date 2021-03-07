@@ -24,12 +24,10 @@ function zoomOut() {
   else setTimeout(completeTransition, 1000);
 }
 
-function loadPage(page) {
-  $.getJSON({ url: '../assets/pages/page' + page + '.html' }).done(function(
-    pageHtml
-  ) {
-    console.log(pageHtml);
-    // $('.my-book .p' + page).html(pageHtml.replace('samples/steve-jobs/', ''));
+function loadPage(page, pages, url) {
+  $.get({ url }).done(function(pageHtml) {
+    // $('.my-book .p' + page).append(`<pdf :src="${url}" :page="${page}" @num-pages="${pages}"></pdf>`);
+    $('.my-book .p' + page).html(`url: ${url}, page: ${page}, pages: ${pages}`);
   });
 }
 
@@ -119,16 +117,17 @@ export const updateDepth = function(book, newPage) {
   else $('.my-book .p111 .depth').css({ width: 0 });
 };
 
-export const addPage = function(page, book) {
+export const addPage = function(page, book, pages, url) {
   // let id,
   //   pages = book.turn('pages');
   if (!book.turn('hasPage', page)) {
     const element = $('<div />', {
       class: 'own-size',
-      css: { width: 460, height: 582 }
+      // css: { width: 460, height: 582 }
+      css: { width: 480, height: 600 }
     }).html('<div class="loader"></div>');
     if (book.turn('addPage', element, page)) {
-      loadPage(page);
+      loadPage(page, pages, url);
     }
   }
 };

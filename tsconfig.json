@@ -14,12 +14,15 @@
     "suppressImplicitAnyIndexErrors": true,
     "baseUrl": ".",
     "types": [
-      "webpack-env"
+      "webpack-env",
+      "jquery"
     ],
     "paths": {
-      "@/*": [
-        "src/*"
-      ]
+      "@/*": ["src/*"],
+      "@assets/*": ["src/assets/*"],
+      "@libs/*": ["src/libs/*"],
+      "@cmp/*": ["src/components/*"],
+      "@store/*": ["src/store/*"],
     },
     "lib": [
       "esnext",

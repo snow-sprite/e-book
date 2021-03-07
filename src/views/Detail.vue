@@ -10,7 +10,20 @@
         >
           <img :src="item.pic" alt="" />
         </div>
-        <input class="page-input" type="text" v-model="searchNum" />
+        <div class="page-input-box page-span">
+          <input
+            v-if="isShowTurnInput"
+            class="page-input"
+            type="text"
+            v-model="searchNum"
+            v-focus
+            @blur="hideTurnBox"
+            @keydown.enter="pageTurn"
+          />
+          <span v-show="!isShowTurnInput && page && pages" @click="showTurnBox"
+            >{{ page }} / {{ pages }}</span
+          >
+        </div>
         <div
           class="btn"
           v-for="item in rightNavs"
@@ -35,11 +48,11 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
+import { mapGetters } from 'vuex';
 import { simple } from '@libs/simple';
 import device from '@libs/device';
-
 import EBook from '@cmp/EBook';
 
 // images
@@ -58,14 +71,32 @@ import down from '@assets/images/down.png';
 import full from '@assets/images/full.png';
 import more from '@assets/images/more.png';
 
+export interface Navs {
+  id?: number;
+  title?: string;
+  pic?: string;
+  isShow?: boolean;
+}
+
 // Vue's options here..
 @Component({
+  name: 'Detail',
+  computed: {
+    ...mapGetters('book', ['page', 'pages'])
+  },
   components: {
     EBook
+  },
+  directives: {
+    focus: {
+      inserted(el: HTMLElement) {
+        el.focus();
+      }
+    }
   }
 })
 export default class Detail extends Vue {
-  leftNavs = [
+  private leftNavs: Array<Navs> = [
     { id: 1, title: '放大', pic: zoomIn, isShow: true },
     { id: 2, title: '缩略图', pic: nav, isShow: true },
     { id: 3, title: '目录', pic: list, isShow: true },
@@ -73,7 +104,7 @@ export default class Detail extends Vue {
     { id: 5, title: '第一页', pic: start, isShow: true },
     { id: 6, title: '前一页', pic: pre, isShow: true }
   ];
-  rightNavs = [
+  private rightNavs: Array<Navs> = [
     { id: 7, title: '下一页', pic: next, isShow: true },
     { id: 8, title: '最后一页', pic: end, isShow: true },
     { id: 9, title: '打开声音', pic: voice, isShow: true },
@@ -83,15 +114,33 @@ export default class Detail extends Vue {
     { id: 13, title: '更多', pic: more, isShow: false }
   ];
 
-  searchNum = '';
+  /**
+   * 显示跳转输入框 || 页码
+   */
+  private searchNum = '';
+  private isShowTurnInput = false;
+  private showTurnBox() {
+    this.isShowTurnInput = true;
+  }
+  private hideTurnBox() {
+    this.isShowTurnInput = false;
+    this.searchNum = '';
+  }
 
-  init() {
+  /**
+   * 输入页码跳转
+   */
+  private pageTurn() {
+    alert(this.searchNum);
+  }
+
+  private init() {
     // TODO
   }
 
-  isSearch = false;
+  private isSearch = false;
 
-  isMobile = device.isMobile();
+  public isMobile: boolean = device.isMobile();
 
   resizeFn() {
     const docWidth = (document.body || document.documentElement).clientWidth;
@@ -151,16 +200,36 @@ export default class Detail extends Vue {
           margin: 0.04rem 0 0 0.02rem;
         }
       }
-      .page-input {
+      .page-input-box {
         width: 1rem;
-        outline: 0;
-        border: 0;
         border-radius: 0.03rem;
         box-sizing: border-box;
-        padding: 0 0.1rem;
+        // padding: 0 0.1rem;
         text-align: center;
         font-size: 0.13rem;
         margin: 0 0.03rem 0;
+        .page-input {
+          width: 100%;
+          height: 100%;
+          outline: 0;
+          border: 0;
+          border-radius: 0.03rem;
+          box-sizing: border-box;
+          padding: 0 0.1rem;
+          text-align: center;
+          font-size: 0.13rem;
+          margin: 0 0.03rem 0;
+        }
+        span {
+          display: inline-block;
+          width: 100%;
+          height: 100%;
+        }
+      }
+      .page-span {
+        display: inline-block;
+        line-height: 0.3rem;
+        background: #fff;
       }
       .btn-13 {
         display: none;

@@ -1,13 +1,8 @@
-interface Inavs {
-  id: number;
-  title: string;
-  pic: HTMLElement;
-  isShow: boolean;
-}
+import INavs from '../views/Detail';
 export const simple = (
   docWidth: number,
-  lefts: Array<Inavs>,
-  rights: Array<Inavs>
+  lefts: Array<INavs>,
+  rights: Array<INavs>
 ) => {
   // 是否显示更多
   if (docWidth <= 1200) {
