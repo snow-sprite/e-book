@@ -23,6 +23,7 @@
       "@libs/*": ["src/libs/*"],
       "@cmp/*": ["src/components/*"],
       "@store/*": ["src/store/*"],
+      "@views/*": ["src/views/*"]
     },
     "lib": [
       "esnext",

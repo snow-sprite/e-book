@@ -164,9 +164,7 @@ body, ul, table, form{
 
 .my-book .p1,
 .my-book .p2,
-.my-book .p3, 
-.my-book .p111, 
-.my-book .p112{
+.my-book .p3{
 	background-color:white;
 	/* background-image:url(../imgs/book-covers.jpg) !important; */
 }

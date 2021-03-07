@@ -25,10 +25,10 @@ function zoomOut() {
 }
 
 function loadPage(page, pages, url) {
-  $.get({ url }).done(function(pageHtml) {
-    // $('.my-book .p' + page).append(`<pdf :src="${url}" :page="${page}" @num-pages="${pages}"></pdf>`);
-    $('.my-book .p' + page).html(`url: ${url}, page: ${page}, pages: ${pages}`);
-  });
+  // $.get({ url }).done(function(pageHtml) {
+  //   // $('.my-book .p' + page).append(`<pdf :src="${url}" :page="${page}" @num-pages="${pages}"></pdf>`);
+  //   $('.my-book .p' + page).html(`url: ${url}, page: ${page}, pages: ${pages}`);
+  // });
 }
 
 function zoomThis(pic) {
