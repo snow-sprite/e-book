@@ -5,7 +5,7 @@
       v-for="(lis, ind) in list"
       :key="ind"
       title="名字"
-      @click="jumpDetail(ind)"
+      @click="jumpDetail(+ind)"
     >
       <div class="thumb">
         <img :src="lis.thumb" alt="" />
@@ -20,7 +20,7 @@
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
 
-interface List {
+interface BookList {
   name?: string;
   thumb?: string;
 }
@@ -29,7 +29,7 @@ interface List {
   name: 'List'
 })
 export default class List extends Vue {
-  private list: Array<List> = [
+  private list: Array<BookList> = [
     {
       name: '山',
       thumb:

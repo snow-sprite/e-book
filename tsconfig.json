@@ -12,6 +12,7 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "suppressImplicitAnyIndexErrors": true,
+    "noImplicitAny": false,
     "baseUrl": ".",
     "types": [
       "webpack-env",

@@ -1,7 +1,8 @@
 import { Vue } from 'vue-property-decorator';
+import { DirectiveBinding } from 'vue/types/options';
 Vue.directive('throttle', {
-  bind: (el: HTMLElement, { value }: { value: Function }): void => {
-    if (typeof value !== 'function') {
+  bind: (el: HTMLElement, binding: DirectiveBinding) => {
+    if (typeof binding.value !== 'function') {
       throw new Error('v-throttle: Error Type!(Must be a Function.)');
     }
     el['timer'] = null;
@@ -13,13 +14,13 @@ Vue.directive('throttle', {
         if (currentTime - preTime < delay) {
           clearTimeout(el['timer']);
           el['timer'] = setTimeout(() => {
-            value();
+            binding.value();
             preTime = currentTime;
             clearTimeout(el['timer']);
             el['timer'] = null;
           }, delay);
         } else {
-          value();
+          binding.value();
           preTime = currentTime;
         }
       };
