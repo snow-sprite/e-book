@@ -2,74 +2,125 @@ import INavs from '../views/Detail';
 export const simple = (
   docWidth: number,
   lefts: Array<INavs>,
-  rights: Array<INavs>
+  rights: Array<INavs>,
+  isZoomIn: boolean
 ) => {
   // 是否显示更多
   if (docWidth <= 1200) {
-    rights.forEach(rNav => {
+    rights.some(rNav => {
       if (rNav['id'] === 11 || rNav['id'] === 12) rNav['isShow'] = false;
-      if (rNav['id'] === 13) rNav['isShow'] = true;
+      if (rNav['id'] === 13) {
+        rNav['isShow'] = true;
+        return true;
+      }
     });
   } else {
-    rights.forEach(rNav => {
+    rights.some(rNav => {
       if (rNav['id'] === 11 || rNav['id'] === 12) rNav['isShow'] = true;
-      if (rNav['id'] === 13) rNav['isShow'] = false;
+      if (rNav['id'] === 13) {
+        rNav['isShow'] = false;
+        return true;
+      }
     });
   }
 
   // 是否显示自动翻页
   if (docWidth <= 1164) {
-    lefts.forEach(rNav => {
-      if (rNav['id'] === 4) rNav['isShow'] = false;
+    lefts.some(rNav => {
+      if (rNav['id'] === 4) {
+        rNav['isShow'] = false;
+        return true;
+      }
     });
   } else {
-    lefts.forEach(rNav => {
-      if (rNav['id'] === 4) rNav['isShow'] = true;
+    lefts.some(rNav => {
+      if (rNav['id'] === 4) {
+        rNav['isShow'] = true;
+        return true;
+      }
     });
   }
 
   // 是否显示缩略图 打开声音
   if (docWidth <= 1128) {
-    lefts.forEach(rNav => {
-      if (rNav['id'] === 2) rNav['isShow'] = false;
+    lefts.some(rNav => {
+      if (rNav['id'] === 2) {
+        rNav['isShow'] = false;
+        return true;
+      }
     });
-    rights.forEach(rNav => {
-      if (rNav['id'] === 9) rNav['isShow'] = false;
+    rights.some(rNav => {
+      if (rNav['id'] === 9) {
+        rNav['isShow'] = false;
+        return true;
+      }
     });
   } else {
-    lefts.forEach(rNav => {
-      if (rNav['id'] === 2) rNav['isShow'] = true;
+    lefts.some(rNav => {
+      if (rNav['id'] === 2) {
+        rNav['isShow'] = true;
+        return true;
+      }
     });
-    rights.forEach(rNav => {
-      if (rNav['id'] === 9) rNav['isShow'] = true;
+    rights.some(rNav => {
+      if (rNav['id'] === 9) {
+        rNav['isShow'] = true;
+        return true;
+      }
     });
   }
 
   // 是否显示目录 分享
   if (docWidth <= 1092) {
-    lefts.forEach(rNav => {
-      if (rNav['id'] === 3) rNav['isShow'] = false;
+    lefts.some(rNav => {
+      if (rNav['id'] === 3) {
+        rNav['isShow'] = false;
+        return true;
+      }
     });
-    rights.forEach(rNav => {
-      if (rNav['id'] === 10) rNav['isShow'] = false;
+    rights.some(rNav => {
+      if (rNav['id'] === 10) {
+        rNav['isShow'] = false;
+        return true;
+      }
     });
   } else {
-    lefts.forEach(rNav => {
-      if (rNav['id'] === 3) rNav['isShow'] = true;
+    lefts.some(rNav => {
+      if (rNav['id'] === 3) {
+        rNav['isShow'] = true;
+        return true;
+      }
     });
-    rights.forEach(rNav => {
-      if (rNav['id'] === 10) rNav['isShow'] = true;
+    rights.some(rNav => {
+      if (rNav['id'] === 10) {
+        rNav['isShow'] = true;
+        return true;
+      }
     });
   }
 
   // 是否显示放大
   if (docWidth <= 1056) {
-    lefts.forEach(rNav => {
+    lefts.some(rNav => {
       if (rNav['id'] === 1) rNav['isShow'] = false;
+      if (rNav['id'] === 99) {
+        rNav['isShow'] = false;
+        return true;
+      }
     });
   } else {
-    lefts.forEach(rNav => {
-      if (rNav['id'] === 1) rNav['isShow'] = true;
+    lefts.some(rNav => {
+      if (isZoomIn) {
+        if (rNav['id'] === 99) {
+          rNav['isShow'] = true;
+          return true;
+        }
+      } else {
+        if (rNav['id'] === 1) {
+          rNav['isShow'] = true;
+          return true;
+        }
+      }
     });
   }
 };

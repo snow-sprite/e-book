@@ -1,53 +1,26 @@
 <template>
   <div id="canvas">
-    <div id="book-zoom">
-      <div class="my-book">
-        <!-- <pdf :src="pdfUrl" :page="1"></pdf> -->
-        <div depth="1" class="">
-          <div class="side"></div>
-        </div>
-        <!-- <div depth="5" class="hard front-side">
-          <div class="depth"></div>
-        </div> -->
-        <div class="own-size">
-          <!-- :page="currentPage" -->
-          <!-- <pdf
-            :src="pdfUrl"
-            :page="currentPage * 2"
-            @num-pages="pages = $event"
-          ></pdf> -->
-        </div>
-        <div class="own-size even">
-          <!-- <pdf
-            :src="pdfUrl"
-            :page="currentPage * 2 + 1"
-            @num-pages="pages = $event"
-          ></pdf> -->
-        </div>
-        <!-- <div class=" fixed back-side p111">
-          <div class="depth"></div>
-        </div> -->
-        <!-- <div class=" p112"></div> -->
+    <div class="magazine-viewport">
+      <div class="container">
+        <div class="magazine"></div>
       </div>
-    </div>
-    <div id="slider-bar" class="turnjs-slider">
-      <div id="slider"></div>
     </div>
   </div>
 </template>
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import '@assets/js/turn.min';
+import '@assets/js/zoom.min';
 import store from '@/store/index';
+import PDFJS from 'pdfjs-dist';
+
 import {
-  zoomHandle,
-  updateDepth,
   isChrome,
-  // numberOfViews,
-  // getViewNumber,
-  // setPreview,
-  addPage,
-  moveBar
+  resizeViewport,
+  loadSmallPage,
+  loadLargePage,
+  largeMagazineWidth,
+  addPage
 } from '@libs/turnUtils';
 @Component({
   name: 'EBook'
@@ -59,173 +32,179 @@ export default class EBook extends Vue {
   private pages = 0;
   private currentPage = 1;
   private async getPdfPages() {
-    const loadingTask = Vue.prototype.$pdf.createLoadingTask(this.pdfUrl);
-    const data = await loadingTask.promise;
+    // const loadingTask = PDFJS.getDocument(this.pdfUrl);
+    // const data = await loadingTask.promise;
+    // console.log('data', loadingTask);
+
     // 设置总页数
-    this.pages = data.numPages;
+    // this.pages = data.numPages;
+    store.commit('book/setPage', this.currentPage);
+    store.commit('book/setPages', this.pages);
 
     this.init(this.pdfUrl); // 初始化容器
   }
 
   private loadApp(url: string) {
-    const flipbook = $('.my-book');
+    $('#canvas').fadeIn(1000);
+
+    const flipbook = $('.magazine');
+
     // Check if the CSS was already loaded
+    console.log(123, flipbook.width(), flipbook.height());
+
     if (flipbook.width() == 0 || flipbook.height() == 0) {
-      setTimeout(this.loadApp, 3000);
+      setTimeout(this.loadApp, 10);
       return;
     }
-    // Slider
-    // $('#slider').slider({
-    //   min: 1,
-    //   max: 100,
-    //   start: function(event, ui) {
-    //     if (!window._thumbPreview) {
-    //       _thumbPreview = $('<div />', {
-    //         class: 'thumbnail'
-    //       }).html('<div></div>');
-    //       setPreview(ui.value);
-    //       _thumbPreview.appendTo($(ui.handle));
-    //     } else setPreview(ui.value);
-    //     moveBar(false);
-    //   },
 
-    //   slide: function(event, ui) {
-    //     setPreview(ui.value);
-    //   },
-
-    //   stop: function() {
-    //     if (window._thumbPreview) _thumbPreview.removeClass('show');
-
-    //     $('.my-book').turn(
-    //       'page',
-    //       Math.max(1, $(this).slider('value') * 2 - 2)
-    //     );
-    //   }
-    // });
-
-    // URIs
-
-    // Arrows
-
-    $(document).keydown(function(e: Event) {
-      const previous = 37,
-        next = 39;
-
-      switch (e['keyCode']) {
-        case previous:
-          $('.my-book').turn('previous');
-
-          break;
-        case next:
-          $('.my-book').turn('next');
-
-          break;
-      }
-    });
-
-    // Flipbook
-
-    flipbook.bind($.isTouch ? 'touchend' : 'click', zoomHandle);
+    // Create the flipbook
 
     flipbook.turn({
-      elevation: 50,
-      acceleration: !isChrome(),
-      autoCenter: true,
-      gradients: true,
-      display: 'double',
+      // Magazine width
+      width: 450,
+      // Magazine height
+      height: 600,
+      // Duration in millisecond
       duration: 1000,
-      pages: this.pages,
+      // Hardware acceleration
+      acceleration: !isChrome(),
+      // Enables gradients
+      gradients: true,
+      // Auto center this flipbook
+      autoCenter: true,
+      // Elevation from the edge of the flipbook when turning a page
+      elevation: 50,
+      // The number of pages
+      pages: 12,
+      display: 'single',
+      // Events
       when: {
-        turning: function(e: Event, page: number) {
-          const book = $(this),
-            currentPage = book.turn('page'),
-            pages = book.turn('pages');
+        turning: function(event: Event, page: number, view: number) {
+          // TODO 添加缩略图时
+        },
+        turned: function(event: Event, page: number, view: number) {
+          $(this).turn('center');
+          if (page == 1) {
+            $(this).turn('peel', 'br');
+          }
+        },
 
-          if (currentPage > 3 && currentPage < pages - 3) {
-            if (page == 1) {
-              book
-                .turn('page', 2)
-                .turn('stop')
-                .turn('page', page);
-              e.preventDefault();
-              return;
-            } else if (page == pages) {
-              book
-                .turn('page', pages - 1)
-                .turn('stop')
-                .turn('page', page);
-              e.preventDefault();
-              return;
-            }
-          } else if (page > 3 && page < pages - 3) {
-            if (currentPage == 1) {
-              book
-                .turn('page', 2)
-                .turn('stop')
-                .turn('page', page);
-              e.preventDefault();
-              return;
-            } else if (currentPage == pages) {
-              book
-                .turn('page', pages - 1)
-                .turn('stop')
-                .turn('page', page);
-              e.preventDefault();
-              return;
-            }
-          }
-          updateDepth(book, page);
-          if (page >= 2) $('.my-book .p2').addClass('fixed');
-          else $('.my-book .p2').removeClass('fixed');
-          if (page < book.turn('pages')) $('.my-book .p111').addClass('fixed');
-          else $('.my-book .p111').removeClass('fixed');
-        },
-        turned: function(e: Event, page: number) {
-          const book = $(this);
-          if (page == 2 || page == 3) {
-            book.turn('peel', 'br');
-          }
-          updateDepth(book);
-          // $('#slider').slider('value', getViewNumber(book, page));
-          book.turn('center');
-        },
-        start: function() {
-          moveBar(true);
-        },
-        end: function() {
-          const book = $(this);
-          updateDepth(book);
-          setTimeout(function() {
-            // $('#slider').slider('value', getViewNumber(book));
-          }, 1);
-          moveBar(false);
-        },
-        missing: function(e: Event, pages: number) {
-          for (let i = 0; i < pages.length; i++) {
-            addPage(pages[i], $(this), pages, url);
-          }
+        missing: (event: Event, pages: number[]) => {
+          console.log('missing', pages);
+          // Add pages that aren't in the magazine
+
+          for (let i = 0; i < pages.length; i++) addPage(pages[i], $(this));
         }
       }
     });
 
-    // $('#slider').slider('option', 'max', numberOfViews(flipbook));
+    // Zoom.js
 
-    flipbook.addClass('animated');
+    $('.magazine-viewport').zoom({
+      flipbook: $('.magazine'),
 
-    // Show canvas
+      max: function() {
+        return largeMagazineWidth() / $('.magazine').width();
+      },
 
-    $('#canvas').css({
-      visibility: ''
+      when: {
+        swipeLeft: function() {
+          $(this)
+            .zoom('flipbook')
+            .turn('next');
+        },
+
+        swipeRight: function() {
+          $(this)
+            .zoom('flipbook')
+            .turn('previous');
+        },
+
+        resize: function(
+          event: Event,
+          scale: number,
+          page: number,
+          pageElement: HTMLElement
+        ) {
+          if (scale == 1) loadSmallPage(page, pageElement);
+          else loadLargePage(page, pageElement);
+        },
+
+        zoomIn: function() {
+          $('.magazine')
+            .removeClass('animated')
+            .addClass('zoom-in');
+        },
+
+        zoomOut: function() {
+          setTimeout(function() {
+            $('.magazine')
+              .addClass('animated')
+              .removeClass('zoom-in');
+            resizeViewport();
+          }, 0);
+        }
+      }
     });
 
-    store.commit('book/setPage', this.currentPage);
-    store.commit('book/setPages', this.pages);
+    // Zoom event
+    // if ($.isTouch)
+    // 	$('.magazine-viewport').bind('zoom.doubleTap', zoomTo);
+    // else
+    // 	$('.magazine-viewport').bind('zoom.tap', zoomTo);
+
+    // Using arrow keys to turn the page
+
+    $(document).keydown(function(e) {
+      const previous = 37,
+        next = 39,
+        esc = 27;
+
+      switch (e.keyCode) {
+        case previous:
+          // left arrow
+          $('.magazine').turn('previous');
+          e.preventDefault();
+
+          break;
+        case next:
+          //right arrow
+          $('.magazine').turn('next');
+          e.preventDefault();
+
+          break;
+        case esc:
+          $('.magazine-viewport').zoom('zoomOut');
+          e.preventDefault();
+
+          break;
+      }
+    });
+
+    $(window)
+      .resize(function() {
+        resizeViewport();
+      })
+      .bind('orientationchange', function() {
+        resizeViewport();
+      });
+
+    resizeViewport();
+
+    $('.magazine').addClass('animated');
   }
-  init(url: string) {
+  @Prop(Boolean) readonly zoomflag!: boolean;
+
+  @Watch('zoomflag')
+  onZooms(n: boolean) {
+    // Zoom
+    n
+      ? $('.magazine-viewport').zoom('zoomIn')
+      : $('.magazine-viewport').zoom('zoomOut');
+  }
+  private init(url: string) {
     // Hide canvas
-    $('#canvas').css({
-      visibility: 'hidden'
-    });
+    $('#canvas').hide();
     this.loadApp(url);
   }
 
@@ -236,5 +215,5 @@ export default class EBook extends Vue {
 </script>
 
 <style lang="scss" scoped>
-@import '../assets/css/my-jobs.css';
+@import '../assets/css/magazine.css';
 </style>

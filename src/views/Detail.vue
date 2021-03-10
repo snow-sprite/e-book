@@ -1,12 +1,13 @@
 <template>
   <div class="detail-box" v-throttle="resizeFn">
-    <header class="header" v-show="!isMobile">
+    <header class="header" v-show="!isMobilePlus">
       <main>
         <div
           class="btn"
           v-for="item in leftNavs"
           :key="item.id"
           v-show="item.isShow"
+          @click="operate(item)"
         >
           <img :src="item.pic" alt="" />
         </div>
@@ -40,10 +41,10 @@
         </div>
       </div>
     </header>
-    <div class="page-left" v-show="!isMobile"></div>
-    <div class="page-right" v-show="!isMobile"></div>
+    <div class="page-left" v-show="!isMobilePlus"></div>
+    <div class="page-right" v-show="!isMobilePlus"></div>
     <div class="ebook-box">
-      <EBook />
+      <EBook :zoomflag="zoomFlag" />
     </div>
   </div>
 </template>
@@ -53,10 +54,11 @@ import { Vue, Component } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { simple } from '@libs/simple';
 import device from '@libs/device';
-import EBook from '@cmp/EBook';
+import EBook from '@cmp/EBook.vue';
 
 // images
 import zoomIn from '@assets/images/zoom-in.png';
+import zoomOut from '@assets/images/zoom-out.png';
 import nav from '@assets/images/nav.png';
 import list from '@assets/images/list.png';
 import autoplay from '@assets/images/autoplay.png';
@@ -98,6 +100,7 @@ export interface Navs {
 export default class Detail extends Vue {
   private leftNavs: Array<Navs> = [
     { id: 1, title: '放大', pic: zoomIn, isShow: true },
+    { id: 99, title: '缩小', pic: zoomOut, isShow: false },
     { id: 2, title: '缩略图', pic: nav, isShow: true },
     { id: 3, title: '目录', pic: list, isShow: true },
     { id: 4, title: '自动翻页', pic: autoplay, isShow: true },
@@ -128,6 +131,43 @@ export default class Detail extends Vue {
   }
 
   /**
+   * 顶部操作按钮
+   */
+  private operate(item) {
+    switch (item.id) {
+      case 1:
+        this.zooms('zoom-in');
+        item.isShow = false;
+        this.leftNavs.forEach(ln => {
+          if (ln.id === 99) {
+            ln.isShow = true;
+          }
+        });
+        break;
+      case 99:
+        this.zooms('zoom-out');
+        item.isShow = false;
+        this.leftNavs.forEach(ln => {
+          if (ln.id === 1) {
+            ln.isShow = true;
+          }
+        });
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  /**
+   *放大缩小
+   */
+  public zoomFlag = false;
+  private zooms(val: string) {
+    this.zoomFlag = val === 'zoom-in' ? true : false;
+  }
+
+  /**
    * 输入页码跳转
    */
   private pageTurn() {
@@ -142,10 +182,13 @@ export default class Detail extends Vue {
 
   public isMobile: boolean = device.isMobile();
 
+  get isMobilePlus() {
+    return this.isMobile;
+  }
   resizeFn() {
     const docWidth = (document.body || document.documentElement).clientWidth;
     this.isSearch = docWidth <= 869 ? false : true;
-    simple(docWidth, this.leftNavs, this.rightNavs);
+    simple(docWidth, this.leftNavs, this.rightNavs, this.zoomFlag);
   }
 
   mounted() {
