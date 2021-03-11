@@ -2,37 +2,33 @@
  * Magazine sample
  */
 
-export const loadPage = function(page, pageElement) {
-  console.log('page', page);
-  console.log('pageElement', pageElement);
-  // Create an image element
+export const loadPage = async (page, pageElement, pages, pdf) => {
+  // Create an canvas element
+  const canvas = document.createElement(`canvas`),
+    scale = 1.5,
+    pdfContext = await pdf.getPage(page),
+    viewport = pdfContext.getViewport({ scale });
+  // canvas.width = parseInt(viewport.width);
+  // canvas.height = parseInt(viewport.height);
+  canvas.id = `canvas-${page}`;
+  canvas.width = 200;
+  canvas.height = 400;
+  // Set the size
+  $(canvas).appendTo(pageElement);
+  // Remove the loader indicator
+  pageElement.find('.loader').remove();
 
-  // var img = $('<img />');
-
-  // img.mousedown(function(e) {
-  // 	e.preventDefault();
-  // });
-
-  // img.load(function() {
-
-  // 	// Set the size
-  // 	$(this).css({width: '100%', height: '100%'});
-
-  // 	// Add the image to the page after loaded
-
-  // 	$(this).appendTo(pageElement);
-
-  // 	// Remove the loader indicator
-
-  // 	pageElement.find('.loader').remove();
-  // });
-
+  const canvasContext = canvas.getContext('2d');
+  console.log('canvasContext', canvasContext);
   // Load the page
-
-  // img.attr('src', 'pages/' +  page + '.jpg');
+  const renderContext = {
+    canvasContext,
+    viewport
+  };
+  pdfContext.render(renderContext);
 };
 
-export const addPage = function(page, book) {
+export const addPage = (page, book, pdf) => {
   const pages = book.turn('pages');
 
   // Create a new element for this page
@@ -44,7 +40,7 @@ export const addPage = function(page, book) {
     element.html('<div class="gradient"></div><div class="loader"></div>');
 
     // Load the page
-    loadPage(page, element, pages);
+    loadPage(page, element, pages, pdf);
   }
 };
 

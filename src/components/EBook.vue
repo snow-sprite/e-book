@@ -1,8 +1,10 @@
 <template>
-  <div id="canvas">
-    <div class="magazine-viewport">
-      <div class="container">
-        <div class="magazine"></div>
+  <div>
+    <div id="canvas">
+      <div class="magazine-viewport">
+        <div class="container">
+          <div class="magazine"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -12,7 +14,6 @@ import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
 import '@assets/js/turn.min';
 import '@assets/js/zoom.min';
 import store from '@/store/index';
-import PDFJS from 'pdfjs-dist';
 
 import {
   isChrome,
@@ -22,6 +23,9 @@ import {
   largeMagazineWidth,
   addPage
 } from '@libs/turnUtils';
+
+const CMAP_URL = '../node_modules/pdfjs-dist/cmaps';
+
 @Component({
   name: 'EBook'
 })
@@ -32,26 +36,26 @@ export default class EBook extends Vue {
   private pages = 0;
   private currentPage = 1;
   private async getPdfPages() {
-    // const loadingTask = PDFJS.getDocument(this.pdfUrl);
-    // const data = await loadingTask.promise;
-    // console.log('data', loadingTask);
+    const data = await window['pdfjsLib'].getDocument({
+      url: this.pdfUrl,
+      cMapUrl: CMAP_URL,
+      cMapPacked: true
+    }).promise;
 
     // 设置总页数
-    // this.pages = data.numPages;
+    this.pages = data.numPages;
     store.commit('book/setPage', this.currentPage);
     store.commit('book/setPages', this.pages);
 
-    this.init(this.pdfUrl); // 初始化容器
+    this.init(data); // 初始化容器
   }
 
-  private loadApp(url: string) {
+  private loadApp(pdf: Record<string, any>) {
     $('#canvas').fadeIn(1000);
 
     const flipbook = $('.magazine');
 
     // Check if the CSS was already loaded
-    console.log(123, flipbook.width(), flipbook.height());
-
     if (flipbook.width() == 0 || flipbook.height() == 0) {
       setTimeout(this.loadApp, 10);
       return;
@@ -79,10 +83,10 @@ export default class EBook extends Vue {
       display: 'single',
       // Events
       when: {
-        turning: function(event: Event, page: number, view: number) {
+        turning: function() {
           // TODO 添加缩略图时
         },
-        turned: function(event: Event, page: number, view: number) {
+        turned: function(event: Event, page: number) {
           $(this).turn('center');
           if (page == 1) {
             $(this).turn('peel', 'br');
@@ -90,10 +94,9 @@ export default class EBook extends Vue {
         },
 
         missing: (event: Event, pages: number[]) => {
-          console.log('missing', pages);
           // Add pages that aren't in the magazine
-
-          for (let i = 0; i < pages.length; i++) addPage(pages[i], $(this));
+          for (let i = 0; i < pages.length; i++)
+            addPage(pages[i], $(this), pdf);
         }
       }
     });
@@ -147,12 +150,6 @@ export default class EBook extends Vue {
       }
     });
 
-    // Zoom event
-    // if ($.isTouch)
-    // 	$('.magazine-viewport').bind('zoom.doubleTap', zoomTo);
-    // else
-    // 	$('.magazine-viewport').bind('zoom.tap', zoomTo);
-
     // Using arrow keys to turn the page
 
     $(document).keydown(function(e) {
@@ -202,10 +199,10 @@ export default class EBook extends Vue {
       ? $('.magazine-viewport').zoom('zoomIn')
       : $('.magazine-viewport').zoom('zoomOut');
   }
-  private init(url: string) {
+  private init(pdf: Record<string, any>) {
     // Hide canvas
     $('#canvas').hide();
-    this.loadApp(url);
+    this.loadApp(pdf);
   }
 
   mounted() {
