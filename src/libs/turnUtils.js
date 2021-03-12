@@ -4,22 +4,20 @@
 
 export const loadPage = async (page, pageElement, pages, pdf) => {
   // Create an canvas element
+  // TODO pdf显示
   const canvas = document.createElement(`canvas`),
-    scale = 1.5,
+    scale = 1,
     pdfContext = await pdf.getPage(page),
     viewport = pdfContext.getViewport({ scale });
-  // canvas.width = parseInt(viewport.width);
-  // canvas.height = parseInt(viewport.height);
+  canvas.width = parseInt(viewport.width);
+  canvas.height = parseInt(viewport.height);
+  $(canvas).css({ width: '100%', height: '100%' });
   canvas.id = `canvas-${page}`;
-  canvas.width = 200;
-  canvas.height = 400;
   // Set the size
   $(canvas).appendTo(pageElement);
   // Remove the loader indicator
   pageElement.find('.loader').remove();
-
   const canvasContext = canvas.getContext('2d');
-  console.log('canvasContext', canvasContext);
   // Load the page
   const renderContext = {
     canvasContext,
@@ -62,32 +60,26 @@ export const zoomTo = function(event) {
 
 // Load large page
 
-export const loadLargePage = function(page, pageElement) {
-  const img = $('<img />');
-
-  img.load(function() {
-    const prevImg = pageElement.find('img');
-    $(this).css({ width: '100%', height: '100%' });
-    $(this).appendTo(pageElement);
-    prevImg.remove();
-  });
-
-  // Loadnew page
-
-  img.attr('src', 'pages/' + page + '-large.jpg');
+export const loadLargePage = function() {
+  // const img = $('<img />');
+  // img.load(function() {
+  //   const prevImg = pageElement.find('img');
+  //   $(this).css({ width: '100%', height: '100%' });
+  //   $(this).appendTo(pageElement);
+  //   prevImg.remove();
+  // });
+  // // Loadnew page
+  // img.attr('src', 'pages/' + page + '-large.jpg');
 };
 
 // Load small page
 
-export const loadSmallPage = function(page, pageElement) {
-  const img = pageElement.find('img');
-
-  img.css({ width: '100%', height: '100%' });
-
-  img.unbind('load');
-  // Loadnew page
-
-  img.attr('src', 'pages/' + page + '.jpg');
+export const loadSmallPage = function() {
+  // const img = pageElement.find('img');
+  // img.css({ width: '100%', height: '100%' });
+  // img.unbind('load');
+  // // Loadnew page
+  // img.attr('src', 'pages/' + page + '.jpg');
 };
 
 // http://code.google.com/p/chromium/issues/detail?id=128488
@@ -190,5 +182,11 @@ export const moveBar = function(yes) {
 
 export const largeMagazineWidth = function() {
   // return 2214;
-  return (document.body || document.documentElement).clientWidth;
+  // return (document.body || document.documentElement).clientWidth;
+
+  const docW = (document.body || document.documentElement).clientWidth;
+  // docH = (document.body || document.documentElement).clientHeight,
+  // width = (400 / 600) * docH;
+
+  return docW;
 };

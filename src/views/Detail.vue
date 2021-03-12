@@ -160,7 +160,7 @@ export default class Detail extends Vue {
   }
 
   /**
-   *放大缩小
+   * 缩放控制
    */
   public zoomFlag = false;
   private zooms(val: string) {
