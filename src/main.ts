@@ -9,7 +9,6 @@ import '@/directives/throttle';
 
 Vue.config.productionTip = false;
 
-window['pdfjsLib'] = pdfjsLib;
 pdfjsLib.GlobalWorkerOptions.workerSrc = './assets/js/pdf.worker.min.js';
 
 new Vue({
