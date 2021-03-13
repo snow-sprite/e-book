@@ -10,7 +10,7 @@
   </div>
 </template>
 <script lang="ts">
-import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
+import { Vue, Component, Prop, Watch, PropSync } from 'vue-property-decorator';
 import '@/assets/js/turn.min.js';
 import '@/assets/js/zoom.min.js';
 import store from '@/store/index';
@@ -35,6 +35,7 @@ export default class EBook extends Vue {
   // total pages
   private pages = 0;
   private currentPage = 1;
+
   private async getPdfPages() {
     const data = await window['pdfjsLib'].getDocument({
       url: this.pdfUrl,
@@ -50,11 +51,67 @@ export default class EBook extends Vue {
     this.init(data); // 初始化容器
   }
 
-  public loadApp = (pdf: object) => {
+  private init(pdf: object) {
+    // Hide canvas
+    $('#canvas').hide();
+    this.loadApp(pdf);
+  }
+
+  @PropSync('zoomflag', { type: Boolean }) private zoomFlagPro!: boolean;
+  @Watch('zoomflag')
+  onZooms(n: boolean) {
+    // Zoom
+    if (n) {
+      // 放大双页
+      $('.magazine').turn('display', 'double');
+      $('.magazine-viewport').zoom('zoomIn');
+    } else {
+      // 缩小单页
+      $('.magazine').turn('display', 'single');
+      $('.magazine-viewport').zoom('zoomOut');
+    }
+  }
+
+  // 第一页
+  public first() {
+    if ($('.magazine').turn('page') <= 1) return;
+    store.commit('book/setPage', 1);
+    $('.magazine').turn('page', 1);
+  }
+
+  // 前一页
+  public previous() {
+    if ($('.magazine').turn('page') <= 1) return;
+    store.commit('book/setPage', $('.magazine').turn('page'));
+    $('.magazine').turn('previous');
+  }
+
+  // 后一页
+  public next() {
+    if ($('.magazine').turn('page') > this.pages) return;
+    store.commit('book/setPage', $('.magazine').turn('page'));
+    $('.magazine').turn('next');
+  }
+
+  // 最后一页
+  public last() {
+    if ($('.magazine').turn('page') > this.pages) return;
+    store.commit('book/setPage', $('.magazine').turn('page'));
+    $('.magazine').turn('page', this.pages);
+  }
+
+  // 跳转到具体某一页
+  public jumpPage(p) {
+    if (p < 1 || p > this.pages) {
+      alert('输入合法字符！');
+      return;
+    }
+    $('.magazine').turn('page', p);
+  }
+
+  private loadApp = (pdf: object) => {
     $('#canvas').fadeIn(1000);
-
     const flipbook = $('.magazine');
-
     // Check if the CSS was already loaded
 
     if (flipbook.width() == 0 || flipbook.height() == 0) {
@@ -69,7 +126,8 @@ export default class EBook extends Vue {
     flipbook.turn({
       // Magazine width
 
-      width: 450,
+      // width: 960,
+      width: 480,
 
       // Magazine height
 
@@ -103,16 +161,13 @@ export default class EBook extends Vue {
       // Events
 
       when: {
-        turning: function() {
+        turning: (event: Event, page: number) => {
+          store.commit('book/setPage', page);
           // TODO 添加缩略图时
         },
 
         turned: function() {
           $(this).turn('center');
-
-          // if (page == 1) {
-          // 	$(this).turn('peel', 'br');
-          // }
         },
 
         missing: function(event, pages) {
@@ -127,10 +182,10 @@ export default class EBook extends Vue {
     // Zoom.js
 
     $('.magazine-viewport').zoom({
-      flipbook: $('.magazine'),
+      flipbook,
 
-      max: function() {
-        return largeMagazineWidth() / $('.magazine').width();
+      max: () => {
+        return largeMagazineWidth() / flipbook.width();
       },
 
       when: {
@@ -157,12 +212,8 @@ export default class EBook extends Vue {
         },
 
         zoomIn: function() {
-          $('.magazine')
-            .removeClass('animated')
-            .addClass('zoom-in');
-          $('.zoom-icon')
-            .removeClass('zoom-icon-in')
-            .addClass('zoom-icon-out');
+          flipbook.removeClass('animated').addClass('zoom-in');
+          flipbook.removeClass('zoom-icon-in').addClass('zoom-icon-out');
         },
 
         zoomOut: function() {
@@ -171,9 +222,7 @@ export default class EBook extends Vue {
             .addClass('zoom-icon-in');
 
           setTimeout(function() {
-            $('.magazine')
-              .addClass('animated')
-              .removeClass('zoom-in');
+            flipbook.addClass('animated').removeClass('zoom-in');
             resizeViewport();
           }, 0);
         }
@@ -189,13 +238,13 @@ export default class EBook extends Vue {
       switch (e.keyCode) {
         case previous:
           // left arrow
-          $('.magazine').turn('previous');
+          flipbook.turn('previous');
           e.preventDefault();
 
           break;
         case next:
           //right arrow
-          $('.magazine').turn('next');
+          flipbook.turn('next');
           e.preventDefault();
 
           break;
@@ -217,22 +266,8 @@ export default class EBook extends Vue {
 
     resizeViewport();
 
-    $('.magazine').addClass('animated');
+    flipbook.addClass('animated');
   };
-
-  @Prop(Boolean) readonly zoomflag!: boolean;
-  @Watch('zoomflag')
-  onZooms(n: boolean) {
-    // Zoom
-    n
-      ? $('.magazine-viewport').zoom('zoomIn')
-      : $('.magazine-viewport').zoom('zoomOut');
-  }
-  public init(pdf: object) {
-    // Hide canvas
-    $('#canvas').hide();
-    this.loadApp(pdf);
-  }
 
   mounted() {
     this.getPdfPages(); // 初始化pdf

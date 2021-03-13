@@ -142,7 +142,7 @@ export const resizeViewport = function() {
     ) {
       $('.magazine').turn('size', bound.width, bound.height);
 
-      if ($('.magazine').turn('page') == 1) $('.magazine').turn('peel', 'br');
+      // if ($('.magazine').turn('page') == 1) $('.magazine').turn('peel', 'br');
 
       $('.next-button').css({
         height: bound.height,
@@ -182,7 +182,6 @@ export const moveBar = function(yes) {
 
 export const largeMagazineWidth = function() {
   // return 2214;
-  // return (document.body || document.documentElement).clientWidth;
 
   const docW = (document.body || document.documentElement).clientWidth;
   // docH = (document.body || document.documentElement).clientHeight,

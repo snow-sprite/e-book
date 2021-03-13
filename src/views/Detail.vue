@@ -15,7 +15,7 @@
           <input
             v-if="isShowTurnInput"
             class="page-input"
-            type="text"
+            type="number"
             v-model="searchNum"
             v-focus
             @blur="hideTurnBox"
@@ -30,6 +30,7 @@
           v-for="item in rightNavs"
           :key="item.id"
           v-show="item.isShow"
+          @click="operate(item)"
         >
           <img :src="item.pic" alt="" />
         </div>
@@ -41,16 +42,16 @@
         </div>
       </div>
     </header>
-    <div class="page-left" v-show="!isMobilePlus"></div>
-    <div class="page-right" v-show="!isMobilePlus"></div>
+    <div class="page-left" v-show="!isMobilePlus" @click="previous"></div>
+    <div class="page-right" v-show="!isMobilePlus" @click="next"></div>
     <div class="ebook-box">
-      <EBook :zoomflag="zoomFlag" />
+      <EBook :zoomflag="zoomFlag" ref="EBook" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Ref } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { simple } from '@libs/simple';
 import device from '@libs/device';
@@ -117,6 +118,8 @@ export default class Detail extends Vue {
     { id: 13, title: '更多', pic: more, isShow: false }
   ];
 
+  @Ref('EBook') readonly ebook!: EBook;
+
   /**
    * 显示跳转输入框 || 页码
    */
@@ -131,35 +134,6 @@ export default class Detail extends Vue {
   }
 
   /**
-   * 顶部操作按钮
-   */
-  private operate(item) {
-    switch (item.id) {
-      case 1:
-        this.zooms('zoom-in');
-        item.isShow = false;
-        this.leftNavs.forEach(ln => {
-          if (ln.id === 99) {
-            ln.isShow = true;
-          }
-        });
-        break;
-      case 99:
-        this.zooms('zoom-out');
-        item.isShow = false;
-        this.leftNavs.forEach(ln => {
-          if (ln.id === 1) {
-            ln.isShow = true;
-          }
-        });
-        break;
-
-      default:
-        break;
-    }
-  }
-
-  /**
    * 缩放控制
    */
   public zoomFlag = false;
@@ -171,7 +145,95 @@ export default class Detail extends Vue {
    * 输入页码跳转
    */
   private pageTurn() {
-    alert(this.searchNum);
+    this.ebook.jumpPage(this.searchNum);
+    this.isShowTurnInput = false;
+  }
+
+  /**
+   * 显示更多
+   */
+  private showMoreButtons() {
+    const lNavs: Array<Navs> = [],
+      rNavs: Array<Navs> = [];
+    this.leftNavs.some((lNav: Navs) => {
+      if (lNav.isShow === false) {
+        lNavs.push(lNav);
+      }
+    });
+    this.rightNavs.some((rNav: Navs) => {
+      if (rNav.isShow === false) {
+        rNavs.push(rNav);
+      }
+    });
+
+    console.log('left', lNavs);
+
+    console.log('right', rNavs);
+  }
+
+  /**
+   * 上一页按钮
+   */
+  private previous() {
+    this.ebook.previous();
+  }
+
+  /**
+   * 下一页按钮
+   */
+  private next() {
+    this.ebook.next();
+  }
+
+  /**
+   * 顶部操作按钮
+   */
+  private operate(item) {
+    switch (item.id) {
+      case 1:
+        // 放大
+        this.zooms('zoom-in');
+        item.isShow = false;
+        this.leftNavs.some(ln => {
+          if (ln.id === 99) {
+            ln.isShow = true;
+            return true;
+          }
+        });
+        break;
+      case 99:
+        // 缩小
+        this.zooms('zoom-out');
+        item.isShow = false;
+        this.leftNavs.some(ln => {
+          if (ln.id === 1) {
+            ln.isShow = true;
+            return true;
+          }
+        });
+        break;
+      case 5:
+        // 第一页
+        this.ebook.first();
+        break;
+      case 6:
+        // 前一页
+        this.previous();
+        break;
+      case 7:
+        // 下一页
+        this.next();
+        break;
+      case 8:
+        // 最后一页
+        this.ebook.last();
+        break;
+      case 13:
+        this.showMoreButtons();
+        break;
+      default:
+        break;
+    }
   }
 
   private init() {
