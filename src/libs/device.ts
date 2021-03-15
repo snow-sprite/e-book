@@ -18,7 +18,12 @@ export const isMobile = () => {
   return false;
 };
 
+export const isSmallSize = () => {
+  return (document.body || document.documentElement).clientWidth < 580;
+};
+
 export default {
   isWeixin,
-  isMobile
+  isMobile,
+  isSmallSize
 };

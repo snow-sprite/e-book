@@ -21,7 +21,8 @@ import {
   loadSmallPage,
   loadLargePage,
   largeMagazineWidth,
-  addPage
+  addPage,
+  loadPage
 } from '@libs/turnUtils';
 
 const CMAP_URL = '../node_modules/pdfjs-dist/cmaps';
@@ -31,24 +32,34 @@ const CMAP_URL = '../node_modules/pdfjs-dist/cmaps';
 })
 export default class EBook extends Vue {
   // pdf link
-  private pdfUrl = 'http://image.cache.timepack.cn/nodejs.pdf';
+  @Prop(String) readonly pdfurl!: string;
+
   // total pages
   private pages = 0;
   private currentPage = 1;
 
+  private pdfData: object = {};
+
   private async getPdfPages() {
-    const data = await window['pdfjsLib'].getDocument({
-      url: this.pdfUrl,
-      cMapUrl: CMAP_URL,
-      cMapPacked: true
-    }).promise;
+    try {
+      console.log('pdf', this.pdfurl);
 
-    // 设置总页数
-    this.pages = data.numPages;
-    store.commit('book/setPage', this.currentPage);
-    store.commit('book/setPages', this.pages);
+      const data = await window['pdfjsLib'].getDocument({
+        url: this.pdfurl,
+        cMapUrl: CMAP_URL,
+        cMapPacked: true
+      }).promise;
 
-    this.init(data); // 初始化容器
+      this.pdfData = data;
+      // 设置总页数
+      this.pages = data.numPages;
+      store.commit('book/setPage', this.currentPage);
+      store.commit('book/setPages', this.pages);
+
+      this.init(data); // 初始化容器
+    } catch (error) {
+      console.error('err', error);
+    }
   }
 
   private init(pdf: object) {
@@ -64,6 +75,12 @@ export default class EBook extends Vue {
     if (n) {
       // 放大双页
       $('.magazine').turn('display', 'double');
+      loadPage(
+        $('.magazine').turn('page'),
+        $('.magazine'),
+        this.pages,
+        this.pdfData
+      );
       $('.magazine-viewport').zoom('zoomIn');
     } else {
       // 缩小单页

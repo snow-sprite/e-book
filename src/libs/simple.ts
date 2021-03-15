@@ -1,4 +1,6 @@
 import INavs from '../views/Detail';
+import store from '@store/index';
+import { isMobile, isSmallSize } from '@libs/device';
 export const simple = (
   docWidth: number,
   lefts: Array<INavs>,
@@ -123,6 +125,11 @@ export const simple = (
       }
     });
   }
+
+  // 实时计算是否处在手机端下
+  store.commit('isMobileState', isMobile());
+  // 动态计算是否窄屏
+  store.commit('isSmallSizeState', isSmallSize());
 };
 
 export default {

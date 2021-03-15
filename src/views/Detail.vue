@@ -1,6 +1,6 @@
 <template>
   <div class="detail-box" v-throttle="resizeFn">
-    <header class="header" v-show="!isMobilePlus">
+    <header class="header" v-show="!isMobile && !isSmallSize">
       <main>
         <div
           class="btn"
@@ -42,10 +42,18 @@
         </div>
       </div>
     </header>
-    <div class="page-left" v-show="!isMobilePlus" @click="previous"></div>
-    <div class="page-right" v-show="!isMobilePlus" @click="next"></div>
+    <div
+      class="page-left"
+      v-show="!isMobile && !isSmallSize"
+      @click="previous"
+    ></div>
+    <div
+      class="page-right"
+      v-show="!isMobile && !isSmallSize"
+      @click="next"
+    ></div>
     <div class="ebook-box">
-      <EBook :zoomflag="zoomFlag" ref="EBook" />
+      <EBook :pdfurl="pdfUrl" :zoomflag="zoomFlag" ref="EBook" />
     </div>
   </div>
 </template>
@@ -54,7 +62,6 @@
 import { Vue, Component, Ref } from 'vue-property-decorator';
 import { mapGetters } from 'vuex';
 import { simple } from '@libs/simple';
-import device from '@libs/device';
 import EBook from '@cmp/EBook.vue';
 
 // images
@@ -85,7 +92,8 @@ export interface Navs {
 @Component({
   name: 'Detail',
   computed: {
-    ...mapGetters('book', ['page', 'pages'])
+    ...mapGetters('book', ['page', 'pages']),
+    ...mapGetters(['isMobile', 'isSmallSize'])
   },
   components: {
     EBook
@@ -242,15 +250,30 @@ export default class Detail extends Vue {
 
   private isSearch = false;
 
-  public isMobile: boolean = device.isMobile();
-
-  get isMobilePlus() {
-    return this.isMobile;
-  }
   resizeFn() {
     const docWidth = (document.body || document.documentElement).clientWidth;
     this.isSearch = docWidth <= 869 ? false : true;
     simple(docWidth, this.leftNavs, this.rightNavs, this.zoomFlag);
+  }
+
+  public pdfUrl = '';
+
+  created() {
+    const { id } = this.$route.query;
+    console.log(typeof id);
+
+    switch (Number(id)) {
+      case 1:
+        this.pdfUrl =
+          'http://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf';
+        break;
+      case 2:
+        this.pdfUrl = 'http://image.cache.timepack.cn/nodejs.pdf';
+        break;
+      default:
+        this.pdfUrl = '';
+        break;
+    }
   }
 
   mounted() {
