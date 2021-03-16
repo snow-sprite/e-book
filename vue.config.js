@@ -4,7 +4,7 @@ const CompressPlugin = require('compress-webpack-plugin')
 const productionGzipExtensions = ['js', 'css']
 
 module.exports = {
-  publicPath: process.env.NODE_ENV === "production" ? "e-book" : "/",
+  publicPath: process.env.NODE_ENV === "production" ? "/e-book/" : "/",
   outputDir: "dist",
   assetsDir: "static",
   indexPath: "index.html",
