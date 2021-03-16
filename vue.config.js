@@ -1,7 +1,10 @@
 const webpack = require("webpack")
 const path = require("path")
+const CompressPlugin = require('compress-webpack-plugin')
+const productionGzipExtensions = ['js', 'css']
+
 module.exports = {
-  publicPath: "/",
+  publicPath: process.env.NODE_ENV === "production" ? "e-book" : "/",
   outputDir: "dist",
   assetsDir: "static",
   indexPath: "index.html",
@@ -17,14 +20,25 @@ module.exports = {
         jquery: "jquery",
         jQuery: "jquery",
         "window.jQuery": 'jquery'
-       })
+      }),
+      new CompressPlugin({
+        algorithm: 'gzip',
+        test: new RegExp('\\.(' + productionGzipExtensions.join('|') + ')$'),
+        threshold: 10240,
+        minRatio: 0.8
+      }),
+      new webpack.optimize.LimitChunkCountPlugin({
+        maxChunks: 5, 
+        minChunkSize: 100
+      })
     ],
     resolve: {
       alias: {
-        "@assets": path.resolve(__dirname, "src/assets/"),
-        "@libs": path.resolve(__dirname, "src/libs/"),
-        "@cmp": path.resolve(__dirname, "src/components/"),
-        "@store": path.resolve(__dirname, "src/store/"),
+        "@assets": path.resolve(__dirname, "src/assets"),
+        "@libs": path.resolve(__dirname, "src/libs"),
+        "@cmp": path.resolve(__dirname, "src/components"),
+        "@store": path.resolve(__dirname, "src/store"),
+        "@views": path.resolve(__dirname, "src/views")
       }
     }
   },

@@ -65,21 +65,21 @@ import { simple } from '@libs/simple';
 import EBook from '@cmp/EBook.vue';
 
 // images
-import zoomIn from '@assets/images/zoom-in.png';
-import zoomOut from '@assets/images/zoom-out.png';
-import nav from '@assets/images/nav.png';
-import list from '@assets/images/list.png';
-import autoplay from '@assets/images/autoplay.png';
-import start from '@assets/images/start.png';
-import pre from '@assets/images/pre.png';
+const zoomIn = require('@assets/images/zoom-in.png');
+const zoomOut = require('@assets/images/zoom-out.png');
+const nav = require('@assets/images/nav.png');
+const list = require('@assets/images/list.png');
+const autoplay = require('@assets/images/autoplay.png');
+const start = require('@assets/images/start.png');
+const pre = require('@assets/images/pre.png');
 
-import next from '@assets/images/next.png';
-import end from '@assets/images/end.png';
-import voice from '@assets/images/voice.png';
-import share from '@assets/images/share.png';
-import down from '@assets/images/down.png';
-import full from '@assets/images/full.png';
-import more from '@assets/images/more.png';
+const next = require('@assets/images/next.png');
+const end = require('@assets/images/end.png');
+const voice = require('@assets/images/voice.png');
+const share = require('@assets/images/share.png');
+const down = require('@assets/images/down.png');
+const full = require('@assets/images/full.png');
+const more = require('@assets/images/more.png');
 
 export interface Navs {
   id?: number;

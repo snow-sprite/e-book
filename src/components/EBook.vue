@@ -42,8 +42,6 @@ export default class EBook extends Vue {
 
   private async getPdfPages() {
     try {
-      console.log('pdf', this.pdfurl);
-
       const data = await window['pdfjsLib'].getDocument({
         url: this.pdfurl,
         cMapUrl: CMAP_URL,
@@ -58,7 +56,7 @@ export default class EBook extends Vue {
 
       this.init(data); // 初始化容器
     } catch (error) {
-      console.error('err', error);
+      console.error(error);
     }
   }
 
@@ -74,47 +72,47 @@ export default class EBook extends Vue {
     // Zoom
     if (n) {
       // 放大双页
-      $('.magazine').turn('display', 'double');
+      (<any>$('.magazine')).turn('display', 'double');
       loadPage(
-        $('.magazine').turn('page'),
+        (<any>$('.magazine')).turn('page'),
         $('.magazine'),
         this.pages,
         this.pdfData
       );
-      $('.magazine-viewport').zoom('zoomIn');
+      (<any>$('.magazine-viewport')).zoom('zoomIn');
     } else {
       // 缩小单页
-      $('.magazine').turn('display', 'single');
-      $('.magazine-viewport').zoom('zoomOut');
+      (<any>$('.magazine')).turn('display', 'single');
+      (<any>$('.magazine-viewport')).zoom('zoomOut');
     }
   }
 
   // 第一页
   public first() {
-    if ($('.magazine').turn('page') <= 1) return;
+    if ((<any>$('.magazine')).turn('page') <= 1) return;
     store.commit('book/setPage', 1);
-    $('.magazine').turn('page', 1);
+    (<any>$('.magazine')).turn('page', 1);
   }
 
   // 前一页
   public previous() {
-    if ($('.magazine').turn('page') <= 1) return;
-    store.commit('book/setPage', $('.magazine').turn('page'));
-    $('.magazine').turn('previous');
+    if ((<any>$('.magazine')).turn('page') <= 1) return;
+    store.commit('book/setPage', (<any>$('.magazine')).turn('page'));
+    (<any>$('.magazine')).turn('previous');
   }
 
   // 后一页
   public next() {
-    if ($('.magazine').turn('page') > this.pages) return;
-    store.commit('book/setPage', $('.magazine').turn('page'));
-    $('.magazine').turn('next');
+    if ((<any>$('.magazine')).turn('page') > this.pages) return;
+    store.commit('book/setPage', (<any>$('.magazine')).turn('page'));
+    (<any>$('.magazine')).turn('next');
   }
 
   // 最后一页
   public last() {
-    if ($('.magazine').turn('page') > this.pages) return;
-    store.commit('book/setPage', $('.magazine').turn('page'));
-    $('.magazine').turn('page', this.pages);
+    if ((<any>$('.magazine')).turn('page') > this.pages) return;
+    store.commit('book/setPage', (<any>$('.magazine')).turn('page'));
+    (<any>$('.magazine')).turn('page', this.pages);
   }
 
   // 跳转到具体某一页
@@ -123,7 +121,7 @@ export default class EBook extends Vue {
       alert('输入合法字符！');
       return;
     }
-    $('.magazine').turn('page', p);
+    (<any>$('.magazine')).turn('page', p);
   }
 
   private loadApp = (pdf: object) => {
@@ -140,7 +138,7 @@ export default class EBook extends Vue {
 
     // Create the flipbook
 
-    flipbook.turn({
+    (<any>flipbook).turn({
       // Magazine width
 
       // width: 960,
@@ -184,7 +182,7 @@ export default class EBook extends Vue {
         },
 
         turned: function() {
-          $(this).turn('center');
+          (<any>$(this)).turn('center');
         },
 
         missing: function(event, pages) {
@@ -198,35 +196,35 @@ export default class EBook extends Vue {
 
     // Zoom.js
 
-    $('.magazine-viewport').zoom({
+    (<any>$('.magazine-viewport')).zoom({
       flipbook,
 
       max: () => {
-        return largeMagazineWidth() / flipbook.width();
+        return largeMagazineWidth() / (<any>flipbook).width();
       },
 
       when: {
         swipeLeft: function() {
-          $(this)
+          (<any>$(this))
             .zoom('flipbook')
             .turn('next');
         },
 
         swipeRight: function() {
-          $(this)
+          (<any>$(this))
             .zoom('flipbook')
             .turn('previous');
         },
 
-        resize: function(
-          event: Event,
-          scale: number,
-          page: number,
-          pageElement: HTMLElement
-        ) {
-          if (scale == 1) loadSmallPage(page, pageElement);
-          else loadLargePage(page, pageElement);
-        },
+        // resize: function(
+        //   event: Event,
+        //   scale: number,
+        //   page: number,
+        //   pageElement: HTMLElement
+        // ) {
+        //   if (scale == 1) loadSmallPage(page, pageElement);
+        //   else loadLargePage(page, pageElement);
+        // },
 
         zoomIn: function() {
           flipbook.removeClass('animated').addClass('zoom-in');
@@ -247,7 +245,7 @@ export default class EBook extends Vue {
     });
     // Using arrow keys to turn the page
 
-    $(document).keydown(function(e: Event) {
+    $(document).keydown(function(e) {
       const previous = 37,
         next = 39,
         esc = 27;
@@ -255,18 +253,18 @@ export default class EBook extends Vue {
       switch (e.keyCode) {
         case previous:
           // left arrow
-          flipbook.turn('previous');
+          (<any>flipbook).turn('previous');
           e.preventDefault();
 
           break;
         case next:
           //right arrow
-          flipbook.turn('next');
+          (<any>flipbook).turn('next');
           e.preventDefault();
 
           break;
         case esc:
-          $('.magazine-viewport').zoom('zoomOut');
+          (<any>$('.magazine-viewport')).zoom('zoomOut');
           e.preventDefault();
 
           break;

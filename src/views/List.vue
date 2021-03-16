@@ -33,8 +33,8 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import traceBased from '@assets/thumb/1.png';
-import nodejs from '@assets/thumb/2.png';
+const traceBased = require('@assets/thumb/1.png');
+const nodejs = require('@assets/thumb/2.png');
 
 interface BookList {
   name?: string;
@@ -59,22 +59,22 @@ export default class List extends Vue {
       url: 'http://image.cache.timepack.cn/nodejs.pdf'
     },
     {
-      name: '山(unreadable)',
+      name: '山',
       thumb:
         'https://cube.elemecdn.com/6/94/4d3ea53c084bad6931a56d5158a48jpeg.jpeg'
     },
     {
-      name: '小鸟(unreadable)',
+      name: '小鸟',
       thumb:
         'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'
     },
     {
-      name: '小鹿(unreadable)',
+      name: '小鹿',
       thumb:
         'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg'
     },
     {
-      name: '小马(unreadable)',
+      name: '小马',
       thumb:
         'https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg'
     }

@@ -1,10 +1,16 @@
-import INavs from '../views/Detail';
 import store from '@store/index';
 import { isMobile, isSmallSize } from '@libs/device';
+interface Navs {
+  id?: number;
+  title?: string;
+  pic?: string;
+  isShow?: boolean;
+}
+
 export const simple = (
   docWidth: number,
-  lefts: Array<INavs>,
-  rights: Array<INavs>,
+  lefts: Array<Navs>,
+  rights: Array<Navs>,
   isZoomIn: boolean
 ) => {
   // 是否显示更多
