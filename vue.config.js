@@ -29,7 +29,7 @@ module.exports = {
       }),
       new webpack.optimize.LimitChunkCountPlugin({
         maxChunks: 5, 
-        minChunkSize: 100
+        minChunkSize: 1000
       })
     ],
     resolve: {
